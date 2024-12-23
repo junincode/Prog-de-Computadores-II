@@ -13,7 +13,7 @@ void inicM(int m[DIM][DIM]){
 void exibirM(int m[DIM][DIM]){
     for(int i = 0; i < DIM; i++){
         for(int j = 0; j < DIM; j++){
-            //printf("Posição [%d] [%d] = %d no endereco %p\n", i, j, m[i][j], am[i] + j);
+            //printf("Posição [%d] [%d] = %d no endereco %p\n", i, j, m[i][j], m[i] + j);
             printf("[ %d ]", m[i][j]);
         }
         printf("\n");
