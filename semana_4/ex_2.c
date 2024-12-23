@@ -36,6 +36,7 @@ void troca_linhas(int** m, int linha1, int linha2){
     *(m + linha1) = *(m + linha2);
     *(m + linha2) = aux;
 }
+
 int main(){
     
     int lin, col;
