@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char nome[40];
+    int ano_nasc;
+    float renda;
+} Tfunc;
+
+void* inicializa(Tfunc* cadastro, int funcionarios){
+    cadastro = (Tfunc*) malloc (funcionarios * sizeof(Tfunc));
+    for(int i = 0; i < funcionarios; i++){
+        printf("[1]\nNome: ");
+        scanf("%s", (cadastro+i)->nome);
+        printf("Ano de nascimento: ");
+        scanf("%d", &(cadastro + i)->ano_nasc);    
+        printf("Renda: ");
+        scanf("%f", &(cadastro + i)->renda);
+    }
+    return cadastro;
+}
+
+void* inclui_novos(Tfunc* cadastro, int funcionarios, int adicionais){
+    Tfunc* novo_cadastro = (Tfunc*) malloc ((funcionarios + adicionais) * sizeof(Tfunc));
+    
+    //acrescentando os já existentes
+    
+    for(int i = 0; i < funcionarios; i++){
+        *(novo_cadastro + i)->nome = *(cadastro + i)->nome;
+        (novo_cadastro + i)->ano_nasc = (cadastro + i)->ano_nasc;
+        (novo_cadastro + i)->renda = (cadastro + i)->renda;
+    }
+    
+    //acrescentando os novos
+    for(int i = funcionarios; i < adicionais + funcionarios; i++){
+        printf("[1]\nNome: ");
+        puts((cadastro+i)->nome);
+        printf("Ano de nascimento: ");
+        scanf("%d", &(novo_cadastro + i)->ano_nasc);    
+        printf("Renda: ");
+        scanf("%f", &(novo_cadastro + i)->renda);
+    }
+    
+    return novo_cadastro;
+}
+
+void imprime(Tfunc* cadastro, int total_funcionarios){
+    for(int i = 0; i < total_funcionarios; i++){
+        printf("\n[%d]\nNome: ", i+1);
+        printf("%s\n", (cadastro+i)->nome);
+        printf("Ano de nascimento: %d\n", (cadastro+i)->ano_nasc);
+        printf("Renda: R$%.2f\n", (cadastro+i)->renda);
+        printf("---------------------------------------");
+    }
+    
+}
+
+int main(){
+    Tfunc* cadastro;
+    int funcionarios, adicionais;
+    printf("Quantos funcionários: ");
+    scanf("%d", &funcionarios);
+    cadastro = inicializa(cadastro, funcionarios);
+    if (!cadastro){
+        printf("Erro de alocação de memória");
+    }
+    printf("Quantos adicionais: ");
+    scanf("%d", &adicionais);
+    //cadastro = inclui_novos(cadastro, funcionarios, adicionais){
+    imprime(cadastro, funcionarios);   
+
+    return 0;
+}
