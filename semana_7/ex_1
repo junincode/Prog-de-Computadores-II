@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int tamanho(FILE* pArquivo){
+    fseek(pArquivo, 0, SEEK_END);
+    long size = ftell(pArquivo);
+    rewind(pArquivo);
+    return size / sizeof(int);
+    
+}
+
+int grava(FILE* pArquivo, int n){
+    int c = 0;
+    for(int i = n; i > 0; i--){
+        c += fwrite(&i, sizeof(int), 1, pArquivo);
+    }
+    return c;
+}
+
+int* recupera(FILE* pArquivo) {
+    fseek(pArquivo, sizeof(char), SEEK_SET);
+    int* regiao = malloc(tamanho(pArquivo) * sizeof(int)); 
+    if (regiao == NULL) {
+        perror("Failed to allocate memory");
+        exit(1);
+    }
+    fread(regiao, sizeof(int), tamanho(pArquivo), pArquivo); 
+    return regiao;
+}
+
+int exibe_vetor(FILE* pArquivo, int n){
+    int* regiao = recupera(pArquivo);
+    for(int i = 0; i < tamanho(pArquivo); i++){
+        printf("%d ", *(regiao + i));
+    }
+}
+
+int modifica(FILE* pArquivo, int m){
+    
+    fseek(pArquivo, -(m * sizeof(int)), SEEK_END);
+    int c;
+    for(int i = 0; i < m; i++){
+        
+        fread(&c, sizeof(int), 1, pArquivo);
+        
+        if(c % 2 == 0){
+            int dobro = c * 2;
+            fseek(pArquivo, -sizeof(int), SEEK_CUR);
+            fwrite(&dobro, sizeof(int), 1, pArquivo);
+        }
+    }
+}
+
+
+int main(){
+    
+    FILE* pArquivo = fopen("binFile2", "w+");
+    int n = 10;
+    printf("%d ", grava(pArquivo, n));
+    
+    recupera(pArquivo);
+    
+    exibe_vetor(pArquivo, n);
+    
+    modifica(pArquivo, 10);
+    
+    printf("\n");
+    
+    exibe_vetor(pArquivo, n);
+  
+    return 0;
+}
+
+
