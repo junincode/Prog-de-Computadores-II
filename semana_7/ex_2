@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char nome[30];
+    float nota[3];
+    float media;
+} Taluno;
+
+
+int calcula_alunos(FILE* pArquivo){
+    rewind(pArquivo);
+    fseek(pArquivo, 0, SEEK_END);
+    long size = ftell(pArquivo);
+    return size / sizeof(Taluno);
+}
+
+int grava(FILE* pArquivo, Taluno* aluno){
+    return fwrite(aluno, sizeof(Taluno), 1, pArquivo);
+}
+
+void print_aluno(Taluno* aluno){
+    printf("NOME: %s\n", aluno->nome);
+    printf("NOTAS: %.2f %.2f e %.2f\n", aluno->nota[0], aluno->nota[1], aluno->nota[2]);
+    printf("MEDIA: %.2f\n", aluno->media);
+    printf("====================================\n");
+}
+
+int calcular_exibir(FILE* pArquivo){
+    
+    int quantidade = calcula_alunos(pArquivo);
+    
+    rewind(pArquivo);
+    Taluno* alunos = malloc(sizeof(Taluno) * quantidade);
+    printf("========= SISTEMA DESATUALIZADO =========\n");
+    for(int i = 0; i < quantidade; i++){
+        
+        Taluno aux;
+        
+        fread(&aux, sizeof(Taluno), 1, pArquivo);
+        print_aluno(&aux);
+        aux.media = aux.nota[0] * 0.25 + aux.nota[1] * 0.35 + aux.nota[2] * 0.4; // atualiza media
+
+        alunos[i] = aux;
+    }
+    rewind(pArquivo);
+    printf("========== SISTEMA ATUALIZADO ==========\n");
+    for(int i = 0; i < quantidade; i++){
+        fwrite(alunos+i, sizeof(Taluno), 1, pArquivo);
+        print_aluno(alunos+i);
+    }
+}
+
+
+int main(){
+    
+    
+    FILE* pArquivo = fopen("alunos.dat", "w+");
+    int n;
+    
+    printf("Quantos alunos?");
+    scanf("%d", &n);
+    
+    for(int i = 0; i < n; i++){
+        Taluno* aux;
+        printf("Nome: ");
+        scanf("%s", aux->nome);
+        printf("notas [3]: ");
+        scanf("%f %f %f", &aux->nota[0], &aux->nota[1], &aux->nota[2]); 
+        aux->media = (aux->nota[0] + aux->nota[1] + aux->nota[2]) / 3;
+        grava(pArquivo, aux);
+    }
+    
+    calcular_exibir(pArquivo);
+    
+    
+
+    return 0;
+}
+
